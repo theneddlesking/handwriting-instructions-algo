@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="master.css">
+    <title>Handwriting Algo</title>
+</head>
+<body>
+    <input type="file" onchange="handleFiles(this.files)">
+    <canvas id="canvas">
+
+    </canvas>
+</body>
+<script src="./svgToBezier.js"></script>
+
+<script src="./canvas.js"></script>
+<script src="./penController.js"></script>
+<script src="./character.js"></script>
+<script src="./characters.js"></script>
+<script src="./instructions.js"></script>
+</html>
