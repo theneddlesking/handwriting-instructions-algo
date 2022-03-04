@@ -48,21 +48,60 @@ const Instructions = {
     drawFromSVG : function(svg) {
         const instructionNum = svg.length;
 
+        this.instructions = this.instructions.concat(svg);
+
         for (let i = 0; i < instructionNum; i++) {
             setTimeout(function() {
                 const instruction = svg[i];
-                if (instruction.svgPathType == "c") {
-                    Pen.drawRelativeBezierCurve(instruction.coordinates[0], instruction.coordinates[1], instruction.coordinates[2]);
-                }    
-                if (instruction.svgPathType == "M") {
-                    Pen.up();
-                    Pen.moveTo(instruction.coordinates[0].x, instruction.coordinates[0].y);
-                    Pen.down();
+
+                switch (instruction.svgPathType) {
+                    case "c":
+                        Pen.drawRelativeBezierCurve(instruction.coordinates[0], instruction.coordinates[1], instruction.coordinates[2]);
+                        break;
+                    case "C":
+                        Pen.drawBezierCurve(Pen.position, instruction.coordinates[0], instruction.coordinates[1], instruction.coordinates[2], 0.01);
+                        break;    
+                    case "l":
+                        Pen.moveRelative(instruction.coordinates[0].x, instruction.coordinates[0].y);
+                        break;
+                    case "L":
+                        Pen.moveTo(instruction.coordinates[0].x, instruction.coordinates[0].y);
+                        break;    
+                    case "s":
+                        Pen.drawRelativeBezierCurve(instruction.coordinates[0], instruction.coordinates[1]);
+                        break;
+                    case "S":
+                        Pen.drawBezierCurve(Pen.position, instruction.coordinates[0], instruction.coordinates[1], 0.01);
+                        break;
+                    case "h":
+                        Pen.moveRelative(instruction.coordinates[0].x, instruction.coordinates[0].y);
+                        break;
+                    case "H":
+                        Pen.moveTo(instruction.coordinates[0].x, instruction.coordinates[0].y);
+                        break;
+                    case "z":
+                        Pen.up();
+                        Pen.moveTo(instruction.coordinates[0].x, instruction.coordinates[0].y);
+                        Pen.down();
+                        break;
+                    case "M":
+                        Pen.up();
+                        Pen.moveTo(instruction.coordinates[0].x, instruction.coordinates[0].y);
+                        Pen.down();    
+                        break;
+                    
+                    default:
+                        console.log("Unknown path type: " + instruction.svgPathType);
+                        console.log(instruction.coordinates)
                 }
             }, i * 0);
         }
     },
 
+    drawInstruction : function(instruction) {
+        
+    },
+    
     drawFromInstructions : function(instructions) {
 
         if (!instructions) {
@@ -81,6 +120,7 @@ const Instructions = {
             if (instruction.type == "move") {
                 Pen.moveRelative(instruction.x, instruction.y);
             }
+
             this.instructions.push(instruction);
         }
     },

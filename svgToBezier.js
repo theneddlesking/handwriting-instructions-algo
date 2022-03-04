@@ -11,14 +11,28 @@ const svgPaths = [];
 function getInstructionsFromSVGPath(svgPath) {
     const paths = splitSVGPath(svgPath);
 
+    let unknownCoord = false;
+
     for (let path of paths) {
 
         for (let coord of path.coordinates) {
-            if (!svgPath.includes(coord.x) || !svgPath.includes(coord.y)) {
-                console.log("Coord not found: ")
-                console.log(coord)
+            if (!svgPath.includes(coord.x)) {
+
+                console.log("Coord not found (x): " + coord.x);
+                unknownCoord = true;
             }
+            if (!svgPath.includes(coord.y)) {
+
+
+                console.log("Coord not found (y): " + coord.y);
+                unknownCoord = true;
+            }
+
         }
+    }
+
+    if (unknownCoord) {
+        console.log(svgPath)
     }
 
     return paths;
@@ -44,12 +58,14 @@ function splitSVGPath(path) {
     let firstPath = true;
 
     const numbers = "1234567890.";
-    const svgPathTypes = "mczMCZ";
+    const svgPathTypes = "mczlshMCZLSH";
     const separators = ",-" + svgPathTypes;
-
 
     for (let char of path) {
 
+        if (char == "h") {
+            console.log(path)
+        }
 
 
         //point separators
@@ -64,6 +80,10 @@ function splitSVGPath(path) {
                 console.log(currentCoordStr)
             }
 
+            if (pathType == "h" || pathType == "H") {
+                currentCoord.x = coord;
+            }
+
             if (currentCoord.x == undefined) {
                 currentCoord.x = coord;
             } else {
@@ -71,6 +91,7 @@ function splitSVGPath(path) {
                 coordinates.push(currentCoord);
                 currentCoord = {};
             } 
+
 
             currentCoordStr = "";
 
@@ -107,7 +128,6 @@ function splitSVGPath(path) {
 
             continue;
         }
-
 
     }
     return paths;

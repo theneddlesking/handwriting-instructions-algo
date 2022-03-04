@@ -18,11 +18,17 @@ const Canvas = {
 
     curveIterations : 100, 
 
+    updateStrokeStyle : function(color) {
+        this.strokeStyle = color;
+        Context.strokeStyle = color;
+    },
 
     drawLine : function(startPos, endPos) {            
         Context.beginPath();
         Context.moveTo(startPos.x, startPos.y);
         Context.lineTo(endPos.x, endPos.y);
+
+
         Context.stroke();
     },
 
