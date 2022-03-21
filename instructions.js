@@ -1,6 +1,7 @@
 const Instructions = {
     instructions : [],
 
+    saveInstructions : false,
 
     clearInstructions : function() {
         this.instructions = [];
@@ -44,11 +45,14 @@ const Instructions = {
         return Characters[char];
     },
 
-
     drawFromSVG : function(svg) {
         const instructionNum = svg.length;
 
-        this.instructions = this.instructions.concat(svg);
+        this.saveInstructions = true;
+
+        const bezierStep = 0.5;
+
+        const colors = ["red", "orange", "yellow", "green", "blue"];
 
         for (let i = 0; i < instructionNum; i++) {
             setTimeout(function() {
@@ -56,10 +60,12 @@ const Instructions = {
 
                 switch (instruction.svgPathType) {
                     case "c":
-                        Pen.drawRelativeBezierCurve(instruction.coordinates[0], instruction.coordinates[1], instruction.coordinates[2]);
+                        // Pen.color(colors[i % 5]);
+                        Pen.drawRelativeBezierCurve(instruction.coordinates[0], instruction.coordinates[1], instruction.coordinates[2], bezierStep);
+                        Pen.color("black");
                         break;
                     case "C":
-                        Pen.drawBezierCurve(Pen.position, instruction.coordinates[0], instruction.coordinates[1], instruction.coordinates[2], 0.01);
+                        Pen.drawBezierCurve(Pen.position, instruction.coordinates[0], instruction.coordinates[1], instruction.coordinates[2], bezierStep);
                         break;    
                     case "l":
                         Pen.moveRelative(instruction.coordinates[0].x, instruction.coordinates[0].y);
@@ -68,16 +74,16 @@ const Instructions = {
                         Pen.moveTo(instruction.coordinates[0].x, instruction.coordinates[0].y);
                         break;    
                     case "s":
-                        Pen.drawRelativeBezierCurve(instruction.coordinates[0], instruction.coordinates[1]);
+                        Pen.drawRelativeBezierCurve(instruction.coordinates[0], instruction.coordinates[1], bezierStep);
                         break;
                     case "S":
-                        Pen.drawBezierCurve(Pen.position, instruction.coordinates[0], instruction.coordinates[1], 0.01);
+                        Pen.drawBezierCurve(Pen.position, instruction.coordinates[0], instruction.coordinates[1], bezierStep);
                         break;
                     case "h":
-                        Pen.moveRelative(instruction.coordinates[0].x, instruction.coordinates[0].y);
+                        Pen.moveRelative(instruction.coordinates[0].x, 0);
                         break;
                     case "H":
-                        Pen.moveTo(instruction.coordinates[0].x, instruction.coordinates[0].y);
+                        Pen.moveTo(instruction.coordinates[0].x, Pen.position.y);
                         break;
                     case "z":
                         Pen.up();
@@ -98,11 +104,15 @@ const Instructions = {
         }
     },
 
-    drawInstruction : function(instruction) {
-        
+    saveInstruction : function(instruction) {
+        if (this.saveInstructions) {
+            this.instructions.push(instruction);  
+        }
     },
     
     drawFromInstructions : function(instructions) {
+
+        this.saveInstructions = false;
 
         if (!instructions) {
             return;
@@ -118,10 +128,9 @@ const Instructions = {
                 }
             }
             if (instruction.type == "move") {
-                Pen.moveRelative(instruction.x, instruction.y);
+                // Pen.moveRelative(instruction.x, instruction.y);
+                Pen.moveTo(instruction.x, instruction.y);
             }
-
-            this.instructions.push(instruction);
         }
     },
 }
